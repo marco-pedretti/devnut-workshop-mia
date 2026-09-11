@@ -177,7 +177,7 @@ def prepara_dati() -> pd.DataFrame:
     Split temporale identico a tutti i notebook: 80% piu' vecchio a train
     (di cui i primi 85% `fit` e gli ultimi 15% `calib`), 20% piu' recente a test.
     """
-    ft = features.build_feature_table()
+    ft = features.build_feature_table(save=True)
     keep = ["order_id", "purchase_date", "delivery_days", "estimated_days"]
     df = ft[keep + TOP_FEATURES + EXTRA_COLS].copy()
     df["purchase_date"] = pd.to_datetime(df["purchase_date"])

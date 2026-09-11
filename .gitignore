@@ -9,9 +9,6 @@ __pycache__/
 .ipynb_checkpoints/
 
 # --- Artefatti derivati (rigenerabili dal codice) ---
-# I dati grezzi in data/raw sono versionati apposta; i derivati no.
-data/processed/*
-!data/processed/README.md
 models/*
 !models/README.md
 
