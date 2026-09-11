@@ -1,0 +1,30 @@
+# --- Ambiente Python ---
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipython/
+
+# --- Notebook ---
+.ipynb_checkpoints/
+
+# --- Artefatti derivati (rigenerabili dal codice) ---
+# I dati grezzi in data/raw sono versionati apposta; i derivati no.
+data/processed/*
+!data/processed/README.md
+models/*
+!models/README.md
+
+# --- Cache strumenti ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+
+# --- Sistema operativo ---
+.DS_Store
+Thumbs.db
+desktop.ini
