@@ -1,7 +1,7 @@
 # Traccia per la presentazione — Gruppo 3, Giorni di consegna
 
-Copione per raccontare la dashboard a voce. Una sezione della sidebar = un blocco di
-racconto. Budget totale **12 minuti**, più le domande.
+Copione per raccontare la dashboard a voce. Una pagina = un blocco di racconto, nell'ordine
+in cui stanno nella barra laterale. Budget totale **12 minuti**, più le domande.
 
 Regola generale: **la dashboard mostra, tu spieghi**. Non leggere i numeri sullo schermo,
 digli cosa significano. Ogni sezione qui sotto ha una frase in grassetto: se il pubblico

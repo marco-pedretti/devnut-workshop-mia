@@ -30,17 +30,36 @@ i numeri sullo schermo sono per costruzione gli stessi dei notebook e l'app part
 > `asymmetric_mse` è una funzione Python, serve solo in addestramento e non è serializzabile
 > in modo affidabile.
 
-## Cosa contiene
+## Com'è organizzata
 
-Sette sezioni navigabili dalla barra laterale, nell'ordine del racconto:
+Multipagina nativo (`st.navigation`): una pagina per file, nell'ordine del racconto.
+Ogni pagina ha un URL proprio, quindi si può aprire direttamente una sezione durante
+la presentazione e il tasto «indietro» del browser funziona.
 
-1. **Il problema** — la promessa attuale e il margine sprecato
-2. **Il risultato** — quanto si accorcia la promessa e cosa vuol dire davvero «MAE 10 giorni»
-3. **Dove sbaglia la promessa di oggi** — il decile peggiore e come lo risolve il modello
-4. **Dove sbaglia il nostro modello** — segmenti, casi strani, coda degli errori
-5. **Le feature** — perché queste sette, e la geografia che invecchia
-6. **Perché questo modello** — le quattro strade provate e la frontiera della penalità
-7. **Simulatore** — la previsione su un caso, con gli avvisi sui segmenti fragili
+```
+app/
+├── dashboard.py              entrypoint: configurazione, stile, navigazione
+├── comune.py                 palette, caricamento in cache, mattoni di layout
+├── traccia_presentazione.md  il copione per raccontarla a voce
+└── pagine/
+    ├── 1_problema.py         /problema       la promessa attuale e il margine sprecato
+    ├── 2_risultato.py        /risultato      quanto si accorcia, e cosa vuol dire «MAE 10 giorni»
+    ├── 3_promessa_oggi.py    /promessa-oggi  il decile peggiore e come lo risolve il modello
+    ├── 4_nostri_errori.py    /nostri-errori  segmenti, casi strani, coda degli errori
+    ├── 5_feature.py          /feature        perché queste sette, e la geografia che invecchia
+    ├── 6_modelli.py          /modelli        le quattro strade provate e la frontiera della penalità
+    └── 7_simulatore.py       /simulatore     la previsione su un caso, con gli avvisi
+```
 
-`traccia_presentazione.md` è il copione per raccontarla a voce: una sezione per blocco,
+Una pagina nuova sono due righe: il file in `pagine/` e la sua `st.Page` in `dashboard.py`.
+
+`comune.py` tiene quello che tutte le pagine condividono — palette, CSS, i tre artefatti
+caricati in cache (`M`, `TEST`, `carica_modello()`) e i mattoni di layout (`intestazione`,
+`headline`, `nota`, `kpi`, `stile_grafico`). Se manca `models/`, è lì che l'app si ferma
+con l'istruzione per rigenerarlo, prima che una pagina provi a leggere dati inesistenti.
+
+> `st.set_page_config` in `dashboard.py` viene prima dell'import di `comune`: dev'essere
+> la prima chiamata Streamlit della sessione.
+
+`traccia_presentazione.md` è il copione per raccontarla a voce: un blocco per pagina,
 con i tempi, le frasi che devono passare e le risposte alle domande prevedibili.
