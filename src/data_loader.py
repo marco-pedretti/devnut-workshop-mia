@@ -60,7 +60,9 @@ def load_raw(name: str) -> pd.DataFrame:
             f"Tabella '{name}' sconosciuta. Disponibili: {sorted(RAW_FILES)}"
         )
     path = RAW_DIR / RAW_FILES[name]
-    return pd.read_csv(path, parse_dates=DATE_COLUMNS.get(name))
+    # utf-8-sig rimuove il BOM (presente su product_category_name_translation),
+    # altrimenti la chiave di join contiene un carattere invisibile.
+    return pd.read_csv(path, parse_dates=DATE_COLUMNS.get(name), encoding="utf-8-sig")
 
 
 def load_all_raw() -> dict[str, pd.DataFrame]:
