@@ -202,6 +202,102 @@ def calendar_features(raw: dict[str, pd.DataFrame]) -> pd.DataFrame:
     })
 
 
+# --- Storico della rotta (target encoding causale) ------------------------
+
+def _causal_prior_mean(frame: pd.DataFrame, group_cols: list[str], window_days: int | None = None):
+    """Media del target dentro ogni gruppo, usando SOLO consegne gia' concluse.
+
+    Per ogni riga considera le consegne dello stesso gruppo con
+    `delivered_ts < purchase_ts` della riga corrente: e' l'informazione davvero
+    disponibile al checkout. Ordinare per data di acquisto NON basterebbe (un
+    ordine acquistato prima ma consegnato dopo non e' ancora osservabile).
+
+    `window_days` limita la media alle consegne concluse negli ultimi N giorni.
+    Serve perche' i tempi di consegna calano nel tempo (vedi 01_eda, Sez. 8): una
+    media espandente su tutta la storia resta ancorata al passato e sovrastima.
+    """
+    purchase = frame["purchase_ts"].to_numpy("datetime64[ns]")
+    delivered = frame["delivered_ts"].to_numpy("datetime64[ns]")
+    y = frame["delivery_days"].to_numpy(dtype=float)
+
+    mean = np.full(len(frame), np.nan)
+    n_prior = np.zeros(len(frame), dtype="int64")
+
+    for positions in frame.groupby(group_cols, observed=True).indices.values():
+        order = np.argsort(delivered[positions], kind="mergesort")
+        d_sorted = delivered[positions][order]
+        csum = np.concatenate(([0.0], np.cumsum(y[positions][order])))
+        p = purchase[positions]
+        hi = np.searchsorted(d_sorted, p, side="left")
+        if window_days is None:
+            lo = np.zeros_like(hi)
+        else:
+            lo = np.searchsorted(d_sorted, p - np.timedelta64(window_days, "D"), side="left")
+        n = hi - lo
+        n_prior[positions] = n
+        mean[positions] = np.where(n > 0, (csum[hi] - csum[lo]) / np.maximum(n, 1), np.nan)
+
+    return mean, n_prior
+
+
+def route_history_features(raw: dict[str, pd.DataFrame], window_days: int | None = 60) -> pd.DataFrame:
+    """Giorni di consegna storici sulla rotta (stato venditore -> stato cliente).
+
+    Decisione: target encoding causale, su finestra mobile di `window_days`.
+    L'analisi errori (notebook 03) ha mostrato che alcuni stati cliente (RJ, PA,
+    PE) sbagliano molto piu' di quanto la sola distanza in linea d'aria spieghi:
+    la media storica della rotta cattura i fattori logistici (congestione, hub)
+    che la distanza ignora.
+
+    La finestra mobile e' il punto chiave: con la media espandente la feature
+    PEGGIORA il modello (resta ancorata ai tempi lunghi del 2016-17 mentre i
+    tempi reali calano). Confronto misurato nel notebook 04.
+
+    Oltre alla rotta teniamo il livello piu' aggregato (solo stato cliente) come
+    ripiego per le rotte rare, e il numero di consegne osservate nella finestra
+    come misura di affidabilita' della media.
+    """
+    orders = raw["orders"]
+    delivered = orders[
+        (orders["order_status"] == "delivered")
+        & orders["order_delivered_customer_date"].notna()
+    ][["order_id", "customer_id", "order_purchase_timestamp", "order_delivered_customer_date"]]
+
+    frame = delivered.merge(
+        raw["customers"][["customer_id", "customer_state"]], on="customer_id", how="left"
+    )
+
+    # Stato del venditore prevalente dell'ordine (gli ordini multi-venditore sono ~3%).
+    seller_state = (
+        raw["order_items"][["order_id", "seller_id"]]
+        .merge(raw["sellers"][["seller_id", "seller_state"]], on="seller_id", how="left")
+        .dropna(subset=["seller_state"])
+        .groupby(["order_id", "seller_state"], observed=True)
+        .size()
+        .reset_index(name="n")
+        .sort_values(["order_id", "n"], ascending=[True, False])
+        .drop_duplicates("order_id")[["order_id", "seller_state"]]
+    )
+    frame = frame.merge(seller_state, on="order_id", how="left")
+
+    frame["purchase_ts"] = frame["order_purchase_timestamp"]
+    frame["delivered_ts"] = frame["order_delivered_customer_date"]
+    frame["delivery_days"] = (
+        frame["delivered_ts"] - frame["purchase_ts"]
+    ).dt.total_seconds() / 86400.0
+    frame["route"] = frame["seller_state"].astype(str) + "->" + frame["customer_state"].astype(str)
+
+    route_mean, route_n = _causal_prior_mean(frame, ["route"], window_days)
+    state_mean, _ = _causal_prior_mean(frame, ["customer_state"], window_days)
+
+    return pd.DataFrame({
+        "order_id": frame["order_id"],
+        "route_prior_days": route_mean,
+        "route_prior_n": route_n,
+        "cust_state_prior_days": state_mean,
+    })
+
+
 # --- Tabella feature completa --------------------------------------------
 
 def build_feature_table(save: bool = False) -> pd.DataFrame:
@@ -216,6 +312,7 @@ def build_feature_table(save: bool = False) -> pd.DataFrame:
         category_features(raw),
         seller_load_features(raw),
         calendar_features(raw),
+        route_history_features(raw),
     ):
         table = table.merge(feats, on="order_id", how="left")
 
