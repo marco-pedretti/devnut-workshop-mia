@@ -23,12 +23,15 @@ headline(
 
 conf = pd.DataFrame(M["confronto_modelli"])
 colori_fam = {"baseline": "#e2e8f0", "scartato": GRIGIO, "alternativa": AMBRA, "scelto": VERDE}
+# Posizioni testo su misura dove due punti cadono troppo vicini e la label di default si accavalla.
+posizione_testo = {"XGBoost simmetrico (penalty=1)": "bottom center"}
 fig = go.Figure()
 for fam, gruppo in conf.groupby("famiglia", sort=False):
     fig.add_trace(
         go.Scatter(
             x=gruppo["anticipi"], y=gruppo["mae"], mode="markers+text",
-            name=fam, text=gruppo["modello"], textposition="top center",
+            name=fam, text=gruppo["modello"],
+            textposition=[posizione_testo.get(m, "top center") for m in gruppo["modello"]],
             marker=dict(size=16 if fam == "scelto" else 12, color=colori_fam[fam],
                         line=dict(width=2, color="white")),
             customdata=gruppo["nota"],
@@ -38,7 +41,7 @@ for fam, gruppo in conf.groupby("famiglia", sort=False):
     )
 fig.add_vrect(x0=0, x1=5, fillcolor=VERDE, opacity=0.07, line_width=0,
               annotation_text="zona accettabile (≤ 5% di ritardi)",
-              annotation_position="top left")
+              annotation_position="bottom left")
 fig.add_vline(x=5, line_color=ROSSO, line_dash="dash")
 fig.update_xaxes(title="quota di ritardi (%) — più a sinistra è meglio", range=[0, 15])
 fig.update_yaxes(title="MAE (giorni) — più in basso è meglio", range=[0, 30])
