@@ -186,6 +186,22 @@ def seller_load_features(raw: dict[str, pd.DataFrame], window_days: int = 30) ->
     )
 
 
+# --- Calendario ------------------------------------------------------------
+
+def calendar_features(raw: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    """Feature di calendario dell'acquisto: mese, giorno settimana, weekend.
+
+    Note al checkout (nessun leakage): dipendono solo da `order_purchase_timestamp`.
+    """
+    ts = raw["orders"]["order_purchase_timestamp"]
+    return pd.DataFrame({
+        "order_id": raw["orders"]["order_id"],
+        "purchase_month": ts.dt.month,
+        "purchase_dayofweek": ts.dt.dayofweek,
+        "purchase_is_weekend": ts.dt.dayofweek.isin([5, 6]).astype(int),
+    })
+
+
 # --- Tabella feature completa --------------------------------------------
 
 def build_feature_table(save: bool = False) -> pd.DataFrame:
@@ -199,6 +215,7 @@ def build_feature_table(save: bool = False) -> pd.DataFrame:
         payment_approval_features(raw),
         category_features(raw),
         seller_load_features(raw),
+        calendar_features(raw),
     ):
         table = table.merge(feats, on="order_id", how="left")
 
