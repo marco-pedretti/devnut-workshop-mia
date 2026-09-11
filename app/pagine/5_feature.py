@@ -6,7 +6,7 @@ import streamlit as st
 from plotly.subplots import make_subplots
 
 from comune import (
-    AMBRA, BLU, GRIGIO, M, ROSSO, VERDE, VIOLA,
+    AMBRA, ASSE, BLU, GRIGIO, M, ROSSO, VERDE, VIOLA,
     headline, intestazione, kpi, nota, stile_grafico,
 )
 
@@ -150,7 +150,7 @@ with col2:
                          name="aprile-maggio", marker_color=BLU))
     fig.add_trace(go.Bar(x=o["utilita_test"], y=o["feature"], orientation="h",
                          name="giugno-agosto", marker_color=ROSSO))
-    fig.add_vline(x=0, line_color="#0f172a", line_width=2)
+    fig.add_vline(x=0, line_color=ASSE, line_width=2)
     fig.update_xaxes(title="quanto serve davvero (positivo = utile)")
     fig.update_layout(barmode="group", hovermode="y")
     st.plotly_chart(stile_grafico(fig, 380, "Su due periodi diversi"), width="stretch")

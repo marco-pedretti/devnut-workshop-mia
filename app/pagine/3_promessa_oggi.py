@@ -6,7 +6,7 @@ import streamlit as st
 from plotly.subplots import make_subplots
 
 from comune import (
-    BLU, GRIGIO, M, ROSSO, VERDE,
+    ASSE, BLU, GRIGIO, M, ROSSO, VERDE,
     headline, intestazione, nota, stile_grafico,
 )
 
@@ -34,7 +34,7 @@ with col1:
                marker_color=colori, text=[f"{r:.2f}×" for r in feat["rapporto"]],
                textposition="outside")
     )
-    fig.add_vline(x=1, line_color="#0f172a", line_width=2)
+    fig.add_vline(x=1, line_color=ASSE, line_width=2)
     fig.update_xaxes(title="rapporto fra gruppo difficile e resto del test", range=[0, 1.9])
     fig.update_layout(hovermode=False)
     st.plotly_chart(
@@ -50,7 +50,7 @@ with col2:
                marker_color=colori, text=[f"{r:.2f}×" for r in stati["rapporto"]],
                textposition="outside")
     )
-    fig.add_vline(x=1, line_color="#0f172a", line_width=2)
+    fig.add_vline(x=1, line_color=ASSE, line_width=2)
     fig.update_xaxes(title="sovra/sotto-rappresentazione nel gruppo difficile", range=[0, 4])
     fig.update_layout(hovermode=False)
     st.plotly_chart(

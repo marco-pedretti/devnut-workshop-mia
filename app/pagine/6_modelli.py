@@ -22,7 +22,7 @@ headline(
 )
 
 conf = pd.DataFrame(M["confronto_modelli"])
-colori_fam = {"baseline": "#0f172a", "scartato": GRIGIO, "alternativa": AMBRA, "scelto": VERDE}
+colori_fam = {"baseline": "#e2e8f0", "scartato": GRIGIO, "alternativa": AMBRA, "scelto": VERDE}
 fig = go.Figure()
 for fam, gruppo in conf.groupby("famiglia", sort=False):
     fig.add_trace(

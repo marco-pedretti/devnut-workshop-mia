@@ -6,7 +6,7 @@ import streamlit as st
 from plotly.subplots import make_subplots
 
 from comune import (
-    BLU, GRIGIO, M, MT, ROSSO, TEST, VERDE,
+    ASSE, BLU, GRIGIO, M, MT, ROSSO, TEST, VERDE,
     headline, intestazione, kpi, nota, stile_grafico,
 )
 
@@ -63,7 +63,7 @@ with col1:
             marker_color=VERDE, opacity=0.85, name="ordini",
         )
     )
-    fig.add_vline(x=0, line_color="#0f172a", line_width=2)
+    fig.add_vline(x=0, line_color=ASSE, line_width=2)
     fig.add_vline(
         x=risparmio.mean(), line_color="#7f1d1d", line_dash="dash",
         annotation_text=f"media {risparmio.mean():.1f} gg", annotation_position="top right",
