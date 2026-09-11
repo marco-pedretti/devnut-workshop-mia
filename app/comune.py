@@ -33,7 +33,7 @@ ASSE = "#64748b"
 
 STILE = """
 <style>
-  .block-container {padding-top: 2.2rem; padding-bottom: 3rem; max-width: 1500px;}
+  .block-container {padding-top: 4rem; padding-bottom: 3rem; max-width: 1500px;}
   h1, h2, h3 {letter-spacing: -0.02em;}
   .titolo-sezione {font-size: 2.1rem; font-weight: 700; margin: 0 0 .2rem 0; color: #f1f5f9;}
   .occhiello {text-transform: uppercase; letter-spacing: .12em; font-size: .75rem;
@@ -136,12 +136,12 @@ def kpi(label: str, valore: str, sotto: str = "", tono: str = "neutro") -> None:
 def stile_grafico(fig: go.Figure, altezza: int = 380, titolo: str = "") -> go.Figure:
     fig.update_layout(
         height=altezza,
-        title=dict(text=titolo, font=dict(size=15)) if titolo else None,
-        margin=dict(l=10, r=10, t=45 if titolo else 20, b=10),
+        title=dict(text=titolo, font=dict(size=15)),
+        margin=dict(l=10, r=10, t=45 if titolo else 20, b=40),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         font=dict(family="system-ui, -apple-system, sans-serif", size=13, color="#e2e8f0"),
-        legend=dict(orientation="h", yanchor="bottom", y=1.0, x=0),
+        legend=dict(orientation="h", yanchor="top", y=-0.18, x=0),
         hovermode="x unified",
     )
     fig.update_xaxes(showgrid=False, linecolor="#475569", zerolinecolor="#475569")
