@@ -136,13 +136,14 @@ with col1:
     )
 with col2:
     nota(
-        "Letto bene, il grafico dice una cosa precisa: <strong>entro ±3 giorni il modello "
-        "perde</strong> (7,4% contro 10,8%). Vince quando si allarga la finestra: "
-        "entro ±10 giorni sta al 52,4% contro il 42,2%. "
-        "Tradotto: <strong>taglia le sovrastime assurde</strong> "
-        "(il 99° percentile dell'errore passa da +37,5 a +21,9 giorni) "
-        "ma non promette date «giuste al giorno». "
-        "Per chi gestisce la promessa è il compromesso giusto, ed è meglio dirlo noi "
-        "che sentirselo chiedere.",
+        "Letto bene, il grafico dice:"
+        "<ul style='margin:.4rem 0 .6rem 0; padding-left: 1.2rem;'>"
+        "<li><strong>Entro ±3 giorni il modello perde:</strong> 7,4% contro 10,8%</li>"
+        "<li><strong>Entro ±10 giorni vince:</strong> 52,4% contro 42,2%</li>"
+        "<li><strong>Taglia le sovrastime assurde:</strong> il 99° percentile dell'errore "
+        "passa da +37,5 a +21,9 giorni</li>"
+        "</ul>"
+        "Non promette date «giuste al giorno», ma per chi gestisce la promessa è il "
+        "compromesso giusto — ed è meglio dirlo noi che sentirselo chiedere.",
         "verde",
     )
