@@ -1,0 +1,26 @@
+[project]
+name = "devnut-workshop-mia"
+version = "0.1.0"
+description = "Workshop Devnut x Master MIA - Applied Machine Learning su dataset Olist"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "pandas>=3.0.5",
+    "numpy>=2.5.3",
+    "pyarrow>=25.0.1",
+    "scipy>=1.18.1",
+    "scikit-learn>=1.9.0",
+    "xgboost>=3.4.1",
+    "statsmodels>=0.15.0",
+    "matplotlib>=3.11.1",
+    "seaborn>=0.13.2",
+    "plotly>=7.0.0",
+    "streamlit>=1.63.0",
+    "shap>=0.52.0",
+    "joblib>=1.6.0",
+    "ipykernel>=7.3.0",
+    "jupyter>=1.1.1",
+]
+
+# Questo file elenca le librerie disponibili nell'ambiente, non quelle da usare.
+# E' una cassetta degli attrezzi: quali strumenti servano per il vostro use case
+# lo decidete voi, e lo motivate nel documento di sintesi.
